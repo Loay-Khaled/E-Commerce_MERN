@@ -30,16 +30,16 @@ export const getActiveCartForUser = async ({
 interface ClearCart {
   userId: string;
 }
-export const clearCart = async ({ userId}: ClearCart) => {
-  const cart = await getActiveCartForUser ({ userId});
+export const clearCart = async ({ userId }: ClearCart) => {
+  const cart = await getActiveCartForUser({ userId });
 
   cart.items = [];
-  cart.totalAmount=0
+  cart.totalAmount = 0;
 
   const updatedCart = await cart.save();
 
-  return { data: updatedCart, statusCode: 200};
-}
+  return { data: updatedCart, statusCode: 200 };
+};
 
 interface addItemToCart {
   productId: any;
@@ -123,8 +123,7 @@ export const updateItemInCart = async ({
     (p) => p.product.toString() !== productId
   );
 
-  let total = calculateCartTotalItems({cartItems: otherCartItems})
-
+  let total = calculateCartTotalItems({ cartItems: otherCartItems });
 
   existInCart.quantity = quantity;
 
@@ -160,7 +159,7 @@ export const deleteItemInCart = async ({
     (p) => p.product.toString() !== productId
   );
 
-  const total = calculateCartTotalItems({cartItems: otherCartItems})
+  const total = calculateCartTotalItems({ cartItems: otherCartItems });
 
   cart.items = otherCartItems;
   cart.totalAmount = total;
@@ -170,11 +169,7 @@ export const deleteItemInCart = async ({
   return { data: updatedCart, statusCode: 200 };
 };
 
-const calculateCartTotalItems = ({
-  cartItems,
-}: {
-  cartItems: ICartItem[];
-}) => {
+const calculateCartTotalItems = ({ cartItems }: { cartItems: ICartItem[] }) => {
   const total = cartItems.reduce((sum, product) => {
     sum += product.quantity * product.unitPrice;
     return sum;
@@ -189,19 +184,19 @@ interface Checkout {
 }
 
 export const checkout = async ({ userId, address }: Checkout) => {
-  if(!address) {
-    return { data: "Please add the address", statusCode: 400};
+  if (!address) {
+    return { data: "Please add the address", statusCode: 400 };
   }
 
-  const cart = await getActiveCartForUser ({ userId });
+  const cart = await getActiveCartForUser({ userId });
 
   const orderItems: IOrderItem[] = [];
 
   // Loop cartItems and create orderItems
-  for(const item of cart.items) {
+  for (const item of cart.items) {
     const product = await productModel.findById(item.product);
 
-    if(!product) {
+    if (!product) {
       return { data: "Product not found", statusCode: 400 };
     }
     const orderItem: IOrderItem = {
@@ -228,4 +223,4 @@ export const checkout = async ({ userId, address }: Checkout) => {
   await cart.save();
 
   return { data: order, statusCode: 200 };
-}
+};
