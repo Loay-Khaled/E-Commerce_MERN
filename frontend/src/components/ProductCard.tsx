@@ -15,11 +15,7 @@ interface Props {
 export default function ProductCard({ title, image, price }: Props) {
   return (
     <Card>
-      <CardMedia
-        sx={{ height: 200 }}
-        image={image}
-        title="green iguana"
-      />
+      <CardMedia sx={{ height: 200 }} image={image} title="green iguana" />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}

@@ -8,11 +8,11 @@ import { Box } from "@mui/material";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const[error, setError] = useState(false);
-  
+  const [error, setError] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
-      try{
+      try {
         const response = await fetch(`${BASE_URL}/product`);
         const data = await response.json();
         setProducts(data);
@@ -22,7 +22,6 @@ const HomePage = () => {
     };
 
     fetchData();
-    
   }, []);
 
   if(error) {
