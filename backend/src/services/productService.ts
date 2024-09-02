@@ -14,6 +14,22 @@ export const seedInitialProducts = async () => {
         price: 15000,
         stock: 10,
       },
+
+      {
+        title: "Asus Laptop",
+        image:
+          "https://dlcdnwebimgs.asus.com/gain/4cc342ab-c4fa-42a9-8619-a340f6119bec/w800",
+        price: 25000,
+        stock: 20,
+      },
+
+      {
+        title: "HP Laptop",
+        image:
+          "https://www.hp.com/wcsstore/hpusstore/Treatment/mdps/Q2FY23_Probook_Series_G10_Redesign/Commercial.jpg",
+        price: 40000,
+        stock: 8,
+      },
     ];
 
     const existingProducts = await getAllProducts();
