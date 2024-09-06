@@ -24,8 +24,8 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  if(error) {
-    return <Box>Something went wrong, please try again!</Box>
+  if (error) {
+    return <Box>Something went wrong, please try again!</Box>;
   }
 
   return (
