@@ -16,18 +16,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const { login } = useAuth();
-  
 
   const onSubmit = async () => {
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
     // Validate the form data
-    if( !email || !password){
-        setError('Check submitted data ')
-        return;
+    if (!email || !password) {
+      setError("Check submitted data ");
+      return;
     }
-
 
     //Make the call to API to create the user
     const response = await fetch(`${BASE_URL}/user/login`, {
@@ -48,12 +46,12 @@ const LoginPage = () => {
 
     const token = await response.json();
 
-    if(!token) {
-        setError("Incorrect token")
-        return;
+    if (!token) {
+      setError("Incorrect token");
+      return;
     }
 
-    login(email, token)
+    login(email, token);
     navigate("/");
   };
 
