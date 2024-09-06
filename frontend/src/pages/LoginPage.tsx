@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import { useRef, useState } from "react";
 import Button from "@mui/material/Button";
+import { useRef, useState } from "react";
 import { BASE_URL } from "../constants/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -23,11 +23,11 @@ const LoginPage = () => {
 
     // Validate the form data
     if (!email || !password) {
-      setError("Check submitted data ");
+      setError("Check submitted data.");
       return;
     }
 
-    //Make the call to API to create the user
+    // Make the call to API to create the user
     const response = await fetch(`${BASE_URL}/user/login`, {
       method: "POST",
       headers: {
@@ -40,7 +40,7 @@ const LoginPage = () => {
     });
 
     if (!response.ok) {
-      setError("Unable to Login user, please try different credentials!");
+      setError("Unable to login user, please try different credientials!");
       return;
     }
 
@@ -88,7 +88,7 @@ const LoginPage = () => {
           <Button onClick={onSubmit} variant="contained">
             Login
           </Button>
-          {error && <Typography sx={{ color: "red" }}> {error}</Typography>}
+          {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
         </Box>
       </Box>
     </Container>

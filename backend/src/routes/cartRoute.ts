@@ -3,7 +3,7 @@ import {
   addItemToCart,
   checkout,
   clearCart,
-  deleteItemInCart,
+  deleteItemIncart,
   getActiveCartForUser,
   updateItemInCart,
 } from "../services/cartService";
@@ -61,7 +61,7 @@ router.delete(
     try {
       const userId = req?.user?._id;
       const { productId } = req.params;
-      const response = await deleteItemInCart({ userId, productId });
+      const response = await deleteItemIncart({ userId, productId });
       res.status(response.statusCode).send(response.data);
     } catch {
       res.status(500).send("Something went wrong!");

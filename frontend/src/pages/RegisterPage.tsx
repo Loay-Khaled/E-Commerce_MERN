@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import { useRef, useState } from "react";
 import Button from "@mui/material/Button";
+import { useRef, useState } from "react";
 import { BASE_URL } from "../constants/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +17,7 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-
   const { login } = useAuth();
-  
 
   const onSubmit = async () => {
     const firstName = firstNameRef.current?.value;
@@ -28,13 +26,12 @@ const RegisterPage = () => {
     const password = passwordRef.current?.value;
 
     // Validate the form data
-    if(!firstName || !lastName || !email || !password){
-        setError('Check submitted data ')
-        return;
+    if (!firstName || !lastName || !email || !password) {
+      setError("Check submitted data.");
+      return;
     }
 
-
-    //Make the call to API to create the user
+    // Make the call to API to create the user
     const response = await fetch(`${BASE_URL}/user/register`, {
       method: "POST",
       headers: {
@@ -49,18 +46,18 @@ const RegisterPage = () => {
     });
 
     if (!response.ok) {
-      setError("Unable to register user, please try different credentials!");
+      setError("Unable to register user, please try different credientials!");
       return;
     }
 
     const token = await response.json();
 
-    if(!token) {
-        setError("Incorrect token")
-        return;
+    if (!token) {
+      setError("Incorrect token");
+      return;
     }
 
-    login(email, token)
+    login(email, token);
     navigate("/");
   };
 
@@ -103,7 +100,7 @@ const RegisterPage = () => {
           <Button onClick={onSubmit} variant="contained">
             Register
           </Button>
-          {error && <Typography sx={{ color: "red" }}> {error}</Typography>}
+          {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
         </Box>
       </Box>
     </Container>

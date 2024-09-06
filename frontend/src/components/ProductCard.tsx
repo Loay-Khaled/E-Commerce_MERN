@@ -15,6 +15,7 @@ interface Props {
 
 export default function ProductCard({ _id, title, image, price }: Props) {
   const { addItemToCart } = useCart();
+
   return (
     <Card>
       <CardMedia sx={{ height: 200 }} image={image} title="green iguana" />
@@ -22,7 +23,7 @@ export default function ProductCard({ _id, title, image, price }: Props) {
         <Typography gutterBottom variant="h5" component="div">
           {title}
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+        <Typography variant="body2" color="text.secondary">
           {price} EGP
         </Typography>
       </CardContent>

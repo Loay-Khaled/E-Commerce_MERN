@@ -10,11 +10,10 @@ export const seedInitialProducts = async () => {
       {
         title: "Dell Laptop",
         image:
-          "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/page/category/laptop/xps/fy24-family-launch/prod-312204-laptop-xps-16-9640-14-9440-13-9340-sl-800x620.png?fmt=png-alpha&wid=800&hei=620",
+          "https://m.media-amazon.com/images/I/61+9ew81AfL._AC_UF1000,1000_QL80_.jpg",
         price: 15000,
         stock: 10,
       },
-
       {
         title: "Asus Laptop",
         image:
@@ -22,11 +21,10 @@ export const seedInitialProducts = async () => {
         price: 25000,
         stock: 20,
       },
-
       {
         title: "HP Laptop",
         image:
-          "https://www.hp.com/wcsstore/hpusstore/Treatment/mdps/Q2FY23_Probook_Series_G10_Redesign/Commercial.jpg",
+          "https://www.hp.com/gb-en/shop/Html/Merch/Images/c06723377_1750x1285.jpg",
         price: 40000,
         stock: 8,
       },
