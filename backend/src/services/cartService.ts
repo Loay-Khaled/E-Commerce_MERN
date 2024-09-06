@@ -1,6 +1,7 @@
-import { cartModel, ICart, ICartItem } from "../models/cartModel";
-import { IOrderItem, orderModel } from "../models/orderModel";
+import { Types } from "mongoose";
+import { ICart, ICartItem, cartModel } from "../models/cartModel";
 import productModel from "../models/productModel";
+import { IOrderItem, orderModel } from "../models/orderModel";
 
 interface CreateCartForUser {
   userId: string;
@@ -13,12 +14,21 @@ const createCartForUser = async ({ userId }: CreateCartForUser) => {
 
 interface GetActiveCartForUser {
   userId: string;
+  populateProduct?: boolean;
 }
 
 export const getActiveCartForUser = async ({
   userId,
+  populateProduct,
 }: GetActiveCartForUser) => {
-  let cart = await cartModel.findOne({ userId, status: "active" });
+  let cart;
+  if (populateProduct) {
+    cart = await cartModel
+      .findOne({ userId, status: "active" })
+      .populate("items.product");
+  } else {
+    cart = await cartModel.findOne({ userId, status: "active" });
+  }
 
   if (!cart) {
     cart = await createCartForUser({ userId });
@@ -30,6 +40,7 @@ export const getActiveCartForUser = async ({
 interface ClearCart {
   userId: string;
 }
+
 export const clearCart = async ({ userId }: ClearCart) => {
   const cart = await getActiveCartForUser({ userId });
 
@@ -38,10 +49,13 @@ export const clearCart = async ({ userId }: ClearCart) => {
 
   const updatedCart = await cart.save();
 
-  return { data: updatedCart, statusCode: 200 };
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  };
 };
 
-interface addItemToCart {
+interface AddItemToCart {
   productId: any;
   quantity: number;
   userId: string;
@@ -51,23 +65,23 @@ export const addItemToCart = async ({
   productId,
   quantity,
   userId,
-}: addItemToCart) => {
+}: AddItemToCart) => {
   const cart = await getActiveCartForUser({ userId });
 
-  //Does the item exist in the cart ?
-  const existInCart = cart.items.find(
+  // Does the item exist in the cart ?
+  const existsInCart = cart.items.find(
     (p) => p.product.toString() === productId
   );
 
-  if (existInCart) {
-    return { data: " Item already exists in cart", statusCode: 400 };
+  if (existsInCart) {
+    return { data: "Item already exists in cart!", statusCode: 400 };
   }
 
-  //Fetch the product
+  // Fetch the product
   const product = await productModel.findById(productId);
 
   if (!product) {
-    return { data: "product not found!", statusCode: 400 };
+    return { data: "Product not found!", statusCode: 400 };
   }
 
   if (product.stock < quantity) {
@@ -83,12 +97,15 @@ export const addItemToCart = async ({
   // Update the totalAmount for the cart
   cart.totalAmount += product.price * quantity;
 
-  const updateCart = await cart.save();
+  await cart.save();
 
-  return { data: updateCart, statusCode: 200 };
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  };
 };
 
-interface UpdateItemToCart {
+interface UpdateItemInCart {
   productId: any;
   quantity: number;
   userId: string;
@@ -98,21 +115,21 @@ export const updateItemInCart = async ({
   productId,
   quantity,
   userId,
-}: UpdateItemToCart) => {
+}: UpdateItemInCart) => {
   const cart = await getActiveCartForUser({ userId });
 
-  const existInCart = cart.items.find(
+  const existsInCart = cart.items.find(
     (p) => p.product.toString() === productId
   );
 
-  if (!existInCart) {
+  if (!existsInCart) {
     return { data: "Item does not exist in cart", statusCode: 400 };
   }
 
   const product = await productModel.findById(productId);
 
   if (!product) {
-    return { data: "product not found!", statusCode: 400 };
+    return { data: "Product not found!", statusCode: 400 };
   }
 
   if (product.stock < quantity) {
@@ -125,15 +142,17 @@ export const updateItemInCart = async ({
 
   let total = calculateCartTotalItems({ cartItems: otherCartItems });
 
-  existInCart.quantity = quantity;
-
-  total += existInCart.quantity * existInCart.unitPrice;
+  existsInCart.quantity = quantity;
+  total += existsInCart.quantity * existsInCart.unitPrice;
 
   cart.totalAmount = total;
 
-  const updatedCart = await cart.save();
+  await cart.save();
 
-  return { data: updatedCart, statusCode: 200 };
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  };
 };
 
 interface DeleteItemInCart {
@@ -141,17 +160,17 @@ interface DeleteItemInCart {
   userId: string;
 }
 
-export const deleteItemInCart = async ({
+export const deleteItemIncart = async ({
   userId,
   productId,
 }: DeleteItemInCart) => {
   const cart = await getActiveCartForUser({ userId });
 
-  const existInCart = cart.items.find(
+  const existsInCart = cart.items.find(
     (p) => p.product.toString() === productId
   );
 
-  if (!existInCart) {
+  if (!existsInCart) {
     return { data: "Item does not exist in cart", statusCode: 400 };
   }
 
@@ -164,9 +183,12 @@ export const deleteItemInCart = async ({
   cart.items = otherCartItems;
   cart.totalAmount = total;
 
-  const updatedCart = await cart.save();
+  await cart.save();
 
-  return { data: updatedCart, statusCode: 200 };
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  };
 };
 
 const calculateCartTotalItems = ({ cartItems }: { cartItems: ICartItem[] }) => {
@@ -182,7 +204,6 @@ interface Checkout {
   userId: string;
   address: string;
 }
-
 export const checkout = async ({ userId, address }: Checkout) => {
   if (!address) {
     return { data: "Please add the address", statusCode: 400 };
@@ -199,6 +220,7 @@ export const checkout = async ({ userId, address }: Checkout) => {
     if (!product) {
       return { data: "Product not found", statusCode: 400 };
     }
+
     const orderItem: IOrderItem = {
       productTitle: product.title,
       productImage: product.image,
